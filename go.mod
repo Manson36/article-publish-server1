@@ -8,6 +8,6 @@ require (
 	github.com/jinzhu/gorm v1.9.11 // indirect
 	github.com/qiniu/api.v7 v7.2.5+incompatible // indirect
 	github.com/qiniu/x v7.0.8+incompatible // indirect
-	github.com/spf13/viper v1.5.0 // indirect
+	github.com/spf13/viper v1.5.0
 	qiniupkg.com/x v7.0.8+incompatible // indirect
 )
