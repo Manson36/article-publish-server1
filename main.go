@@ -39,7 +39,11 @@ func web() error {
 	}
 	r.
 		Group("/admin/user").
-		POST("create", adminUserController.Create)
+		POST("/create", adminUserController.Create).
+		POST("/login", adminUserController.Login).
+		POST("/info", adminUserController.Info)
+
+	//image
 
 	return r.Run(":" + config.Web.Port)
 }
