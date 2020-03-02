@@ -11,6 +11,7 @@ import (
 
 type AdminUserService interface {
 	Create(body *models.AdminUserAddReqBody) *models.Ret
+	Login(body *models.AdminUserLoginReqBody) *models.Ret
 }
 
 type adminUserService struct {
@@ -18,7 +19,41 @@ type adminUserService struct {
 }
 
 func NewAdminUserService() AdminUserService {
-	return &adminUserService{}
+	repo := repositories.NewAdminUserRepository()
+	return &adminUserService{
+		repo: repo,
+	}
+}
+
+func (a *adminUserService) Login(body *models.AdminUserLoginReqBody) *models.Ret {
+	user, err := a.repo.Get("email = ? AND removed IS NOT TRUE", body.Email)
+	if err != nil {
+		log.Println("管理用戶信息获取失败", err.Error())
+		return &models.Ret{Code: 500, Msg: "用户信息获取失败，请与平台联系"}
+	}
+
+	if user == nil {
+		return &models.Ret{Code: 400, Msg: "该用户不存在"}
+	}
+
+	if utils.HashPwdWithSalt(body.Password, user.Salt) != user.Password {
+		return &models.Ret{Code: 400, Msg: "输入密码错误"}
+	}
+
+	claims := models.AdminUserCustomClaims{}
+	claims.UserID = user.ID
+	token, err := claims.Sign()
+	if err != nil {
+		log.Println("管理用户登录token生成失败：", err.Error())
+		return &models.Ret{Code: 500, Msg: "管理用户登录token生成失败"}
+	}
+
+	data := models.AdminUserLoginResBody{
+		User:  user,
+		Token: token,
+	}
+
+	return &models.Ret{Code: 200, Msg: "登录成功", Data: data}
 }
 
 func (a *adminUserService) Create(body *models.AdminUserAddReqBody) *models.Ret {

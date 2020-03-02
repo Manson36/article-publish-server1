@@ -9,3 +9,13 @@ type AdminUserAddReqBody struct {
 	IsAdmin      bool                    `json:"isAdmin"`  //是否是管理员
 	PlatformType datamodels.PlatformType `json:"platform"` //平台类型
 }
+
+type AdminUserLoginReqBody struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type AdminUserLoginResBody struct {
+	User  *datamodels.AdminUser `json:"user"`
+	Token string                `json:"token"`
+}
