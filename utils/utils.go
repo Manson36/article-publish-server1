@@ -1,6 +1,10 @@
 package utils
 
-import "crypto/rand"
+import (
+	"crypto/rand"
+	"github.com/article-publish-server1/datamodels"
+	"strconv"
+)
 
 func GetRandomString(size int) string {
 	data := make([]byte, size)
@@ -16,4 +20,22 @@ func GetRandomString(size int) string {
 	}
 
 	return string(out)
+}
+
+func StringSliceToJsonNumArray(arr []string) (datamodels.JsonNumArray, error) {
+	if len(arr) == 0 {
+		return nil, nil
+	}
+
+	numArr := make(datamodels.JsonNumArray, 0)
+	for _, v := range arr {
+		num, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		numArr = append(numArr, num)
+	}
+
+	return numArr, nil
 }

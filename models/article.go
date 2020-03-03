@@ -8,9 +8,9 @@ type ArticleCreateReqBody struct {
 	Tags      []string                `json:"tags"`
 	Summary   string                  `json:"summary"`
 	Content   string                  `json:"content"`
-	Cover     string                  `json:"cover"`
+	Cover     int64                   `json:"cover, string"`
 	CoverPath string                  `json:"coverPath"`
-	Status    string                  `json:"status"` //1.表示草稿状态，2.表示发布状态
+	Status    int8                    `json:"status"` //1.表示草稿状态，2.表示发布状态
 	Platform  datamodels.PlatformType `json:"platform"`
 }
 
