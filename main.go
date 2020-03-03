@@ -56,5 +56,19 @@ func web() error {
 		POST("list", imageControllser.GetList).
 		POST("/remove", imageControllser.Remove)
 
+	//article
+	articleController := controllers.ArticleController{
+		Service: services.NewArticleService(),
+	}
+	r.
+		Group("/article").
+		POST("/uptoken", articleController.Uptoken).
+		POST("/upload/cb", articleController.UploadCb).
+		POST("/create", articleController.Create).
+		POST("/remove", articleController.Remove).
+		POST("/update", articleController.Update).
+		POST("/info", articleController.Info).
+		POST("/list", articleController.List)
+
 	return r.Run(":" + config.Web.Port)
 }

@@ -29,6 +29,16 @@ type articleService struct {
 	uploader *qnuploader.Uploader
 }
 
+func NewArticleService() ArticleService {
+	uploader := qnuploader.NewUploader(nil)
+	return &articleService{
+		imageSvc: NewImageService(),
+		repo:     repositories.NewArticleRepository(),
+		fileRepo: repositories.NewFileRepository(),
+		uploader: uploader,
+	}
+}
+
 func (a articleService) UploadCb(body *qnuploader.UploadImageCbBody) *models.Ret {
 	ret, e := a.imageSvc.CreateImageByUploadBody(body)
 	if e != nil {
