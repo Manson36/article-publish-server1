@@ -44,6 +44,17 @@ func web() error {
 		POST("/info", adminUserController.Info)
 
 	//image
+	imageControllser := controllers.ImageController{
+		Service: services.NewImageService(),
+	}
+	r.
+		Group("/image").
+		GET("/ue", imageControllser.GetUEConfig).
+		POST("/ue", imageControllser.UploadUEFile).
+		POST("/uptoken", imageControllser.Uptoken).
+		POST("/upload/db", imageControllser.UploadCb).
+		POST("list", imageControllser.GetList).
+		POST("/remove", imageControllser.Remove)
 
 	return r.Run(":" + config.Web.Port)
 }

@@ -6,9 +6,13 @@ import (
 
 type CommonRepository interface {
 	Create(entity interface{}) error
+	CreateWithTx(tx *gorm.DB, entity interface{}) error
 	Save(entity interface{}) error
+	SaveWithTx(tx *gorm.DB, entity interface{}) error
 	Remove(entity, query interface{}, args ...interface{}) error
+	RemoveWithTx(tx *gorm.DB, entity, query interface{}, args ...interface{}) error
 	Update(entity, query interface{}, docs map[string]interface{}, args ...interface{}) error
+	UpdateWithTx(tx *gorm.DB, entity, query interface{}, doc map[string]interface{}, args ...interface{}) error
 	Get(entity, query interface{}, args ...interface{}) (interface{}, error)
 	List(entities, order, limit, offset, query interface{}, args ...interface{}) error
 	ListAll(entities, order, query interface{}, args ...interface{}) error
@@ -23,8 +27,16 @@ func (c commonRepository) Create(entity interface{}) error {
 	return c.db.Create(entity).Error
 }
 
+func (c commonRepository) CreateWithTx(tx *gorm.DB, entity interface{}) error {
+	return tx.Create(entity).Error
+}
+
 func (c commonRepository) Save(entity interface{}) error {
 	return c.db.Save(entity).Error
+}
+
+func (c commonRepository) SaveWithTx(tx *gorm.DB, entity interface{}) error {
+	return tx.Save(entity).Error
 }
 
 func (c commonRepository) Remove(entity, query interface{}, args ...interface{}) error {
@@ -34,8 +46,19 @@ func (c commonRepository) Remove(entity, query interface{}, args ...interface{})
 	}).Error
 }
 
+func (c commonRepository) RemoveWithTx(tx *gorm.DB, entity, query interface{}, args ...interface{}) error {
+	return tx.Model(entity).Where(entity, args...).UpdateColumns(map[string]interface{}{
+		"removed":    true,
+		"removed_at": gorm.Expr("now()"),
+	}).Error
+}
+
 func (c commonRepository) Update(entity, query interface{}, docs map[string]interface{}, args ...interface{}) error {
 	return c.db.Model(entity).Where(query, args...).Update(docs).Error
+}
+
+func (c commonRepository) UpdateWithTx(tx *gorm.DB, entity, query interface{}, doc map[string]interface{}, args ...interface{}) error {
+	return tx.Model(entity).Where(query, args...).Updates(doc).Error
 }
 
 func (c commonRepository) Get(entity, query interface{}, args ...interface{}) (interface{}, error) {
