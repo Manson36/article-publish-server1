@@ -44,17 +44,17 @@ func web() error {
 		POST("/info", adminUserController.Info)
 
 	//image
-	imageControllser := controllers.ImageController{
+	imageController := controllers.ImageController{
 		Service: services.NewImageService(),
 	}
 	r.
 		Group("/image").
-		GET("/ue", imageControllser.GetUEConfig).
-		POST("/ue", imageControllser.UploadUEFile).
-		POST("/uptoken", imageControllser.Uptoken).
-		POST("/upload/db", imageControllser.UploadCb).
-		POST("list", imageControllser.GetList).
-		POST("/remove", imageControllser.Remove)
+		GET("/ue", imageController.GetUEConfig).
+		POST("/ue", imageController.UploadUEFile).
+		POST("/uptoken", imageController.Uptoken).
+		POST("/upload/db", imageController.UploadCb).
+		POST("list", imageController.GetList).
+		POST("/remove", imageController.Remove)
 
 	//article
 	articleController := controllers.ArticleController{
@@ -69,6 +69,19 @@ func web() error {
 		POST("/update", articleController.Update).
 		POST("/info", articleController.Info).
 		POST("/list", articleController.List)
+
+	//tag
+	tagController := controllers.TagController{
+		Service: services.NewTagService(),
+	}
+
+	r.
+		Group("/tag").
+		POST("/create", tagController.Create).
+		POST("/remove", tagController.Remove).
+		POST("/update", tagController.Update).
+		POST("/info", tagController.Get).
+		POST("/list", tagController.ListAll)
 
 	return r.Run(":" + config.Web.Port)
 }
